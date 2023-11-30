@@ -1,6 +1,7 @@
 // This code is written while learning CUDA from youtube
 // program to compute the sum of two vectors of length n using unified memory (virtual memory) where we dont
 // need to call cudaMemcpy expxlicitly cudaMallocManaged handles it automatically
+// alongwith that prefetch is also used to boost the performance.
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
@@ -48,6 +49,9 @@ int main()
     cudaMallocManaged(&b, bytes);
     cudaMallocManaged(&c, bytes);
 
+    // get the device id for prefetching calls
+    int id = cudaGetDevice(&id);
+
     // initializing vectors a and b with random values between 0 and 99
     matrix_init(a, b, n);
 
@@ -57,11 +61,19 @@ int main()
     // grid size
     int GRID_SIZE = (int)ceil(n / BLOCK_SIZE);
 
+    // this will prefetch the data for a and  b to device in the back while working on something else
+    cudaMemPrefetchAsync(a, bytes, id);
+    cudaMemPrefetchAsync(b, bytes, id);
+
     // launch kernel
     vectorAdd<<<BLOCK_SIZE, GRID_SIZE>>>(a, b, c, n);
 
     // wait for all the previous operations before using values
     cudaDeviceSynchronize();
+
+    // prefetching c to host
+    cudaMemPrefetchAsync(c, bytes, id);
+
     // Free unified memory (same as memory allocated with cudaMalloc)
     cudaFree(a);
     cudaFree(b);
