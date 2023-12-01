@@ -6,7 +6,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-
+#include <algorithm>
+#include <functional>
 
 // STL
 using std::cout;
