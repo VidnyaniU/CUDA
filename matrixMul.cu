@@ -6,12 +6,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-// #include <algorithm>
-// #include <functional>
+
 
 using namespace std;
 using std::cout;
-// using std::generate;
 using std::vector;
 
 __global__ void matrixMul(const int *a, const int *b, int *c, int N)
@@ -32,7 +30,7 @@ int main()
 {
 
     int N = 1024; // 1024 x  1024 matrix size
-    cout << " N :: " << N << endl;
+    
     size_t bytes = N * N * sizeof(int);
 
     // host vector
@@ -47,16 +45,7 @@ int main()
         h_b.push_back(1);
     }
 
-    cout << h_a[0];
-
-    // generate(h_a.begin(), h_a.end(), []()
-    //          { return rand() % 100; });
-    // generate(h_b.begin(), h_b.end(), []()
-    //          { return rand() % 100; });
-
-    // generate(h_a.begin(), h_a.end(), h_a);
-    // // generate(h_b.begin(), h_b.end(), h_b);
-
+    
     // allocate device memory
     int *d_a, *d_b, *d_c;
 
