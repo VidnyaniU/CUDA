@@ -6,17 +6,16 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <algorithm>
-#include <functional>
+// #include <algorithm>
+// #include <functional>
 
-// STL
+using namespace std;
 using std::cout;
-using std::generate;
+// using std::generate;
 using std::vector;
 
 __global__ void matrixMul(const int *a, const int *b, int *c, int N)
 {
-
     // compute row and column index for each thread
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -32,20 +31,31 @@ __global__ void matrixMul(const int *a, const int *b, int *c, int N)
 int main()
 {
 
-    int N = 1 << 10; // 1024 x  1024 matrix size
-
+    int N = 1024; // 1024 x  1024 matrix size
+    cout << " N :: " << N << endl;
     size_t bytes = N * N * sizeof(int);
 
     // host vector
-    vector<int> h_a(N * N);
-    vector<int> h_b(N * N);
+    vector<int> h_a;
+    vector<int> h_b;
     vector<int> h_c(N * N);
 
     // initialize matrices
-    generate(h_a.begin(), h_a.end(), []()
-             { return rand() % 100; });
-    generate(h_b.begin(), h_b.end(), []()
-             { return rand() % 100; });
+    for (int i = 0; i < N * N; i++)
+    {
+        h_a.push_back(1);
+        h_b.push_back(1);
+    }
+
+    cout << h_a[0];
+
+    // generate(h_a.begin(), h_a.end(), []()
+    //          { return rand() % 100; });
+    // generate(h_b.begin(), h_b.end(), []()
+    //          { return rand() % 100; });
+
+    // generate(h_a.begin(), h_a.end(), h_a);
+    // // generate(h_b.begin(), h_b.end(), h_b);
 
     // allocate device memory
     int *d_a, *d_b, *d_c;
@@ -67,6 +77,9 @@ int main()
 
     // launch kernel
     matrixMul<<<blocks, threads>>>(d_a, d_b, d_c, N);
+
+    // Copy back to the host
+    cudaMemcpy(h_c.data(), d_c, bytes, cudaMemcpyDeviceToHost);
 
     cout << "COMPLETED SUCCESSFULLY\n";
 
