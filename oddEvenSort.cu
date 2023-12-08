@@ -62,6 +62,6 @@ int main()
     }
 
     free(arr);
-    cudafree(darr);
+    cudaFree(darr);
     return 0;
 }
