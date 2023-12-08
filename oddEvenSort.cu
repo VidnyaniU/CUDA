@@ -35,7 +35,7 @@ __global__ void odd(int *darr, int n)
 int main()
 {
     int *arr, *darr; // declaring host and device arrays
-    int n, i;
+    int n;
 
     printf("Enter the size of the array: \n");
     scanf("%d", &n);
@@ -48,15 +48,15 @@ int main()
     }
 
     cudaMalloc(&darr, n * sizeof(int));                            // allocating memory in device
-    cudaMemcpy(darr, arr, n * sizeof(int), cudaMemcpyHostToDevice) // copying the array from host to device
+    cudaMemcpy(darr, arr, n * sizeof(int), cudaMemcpyHostToDevice); // copying the array from host to device
 
-        for (int i = 0; i < n / 2; i++)
+    for (int i = 0; i < n / 2; i++)
     {
         even<<<1, n>>>(darr, n); // kernel for even positions
         odd<<<1, n>>>(darr, n);  // kernel for odd positions
     }
-    cudaMemcpy(arr, darr, n * sizeof(int), cudaMemcpyDeviceToHost) // copying the array from device to host
-        printf("Sorted Array: ");
+    cudaMemcpy(arr, darr, n * sizeof(int), cudaMemcpyDeviceToHost); // copying the array from device to host
+    printf("Sorted Array: ");
     for (int i = 0; i < n; i++)
     {
         printf("%d  ", arr[i]);
