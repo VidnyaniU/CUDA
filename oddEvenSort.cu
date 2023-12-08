@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <conio.h>
 #include <cuda.h>
 __global__ void even(int *darr, int n)
 {
